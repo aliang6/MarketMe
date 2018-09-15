@@ -41,7 +41,7 @@ module.exports={
                 }
                 return comments;
             }).then((resolution)=>{
-                Promise.all(resolution).then((vals)=>{
+                return Promise.all(resolution).then((vals)=>{
                     var text="";
                     for (var i=0; i<num_posts; i++){
                         //only seems to allow top-level comments
@@ -49,17 +49,21 @@ module.exports={
                         for (var j=0; j<num_comments; j++){
                             //i: post index, j: comment index
                             try{
-                                text+=vals[i][1]['data']['children'][j]['data']['body']+"\n";
+                                cur_text=vals[i][1]['data']['children'][j]['data']['body'];
+                                if (cur_text!="undefined"){
+                                    text+=cur_text+". ";
+                                }
                                 //console.log(vals[i][1]['data']['children'][j]['data']['body']);
                             }
                             catch(e){
                             };
+                            /*
                             try{
-                                text+=vals[i][1]['data']['children'][0]['data']['children']+"\n";
+                                text+=vals[i][1]['data']['children'][0]['data']['children']+". ";
                                 //console.log(vals[i][1]['data']['children'][0]['data']['children']);
                             }
                             catch(e){
-                            };
+                            };*/
                         }
                     }
                     //console.log(text);
