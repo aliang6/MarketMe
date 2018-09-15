@@ -2,7 +2,6 @@ const http=require('http');
 const request=require('request');
 
 module.exports={
-
     getSubredditsByTop: function getSubredditsByTop(subreddit, limit){
     var timeframe ='all';
     var redditRequest = new Promise(
@@ -32,24 +31,26 @@ module.exports={
     },
 
     importText: function importText(subreddit, num_posts, num_comments){
-
     postRequest=this.getSubredditsByTop(subreddit, num_posts);
     postRequests=postRequest.then((resolution) => {
+                posts=[]
                 comments=[]
                 for (var i=0; i<resolution.length; i++){
+                    posts.push([resolution[i]['data']['title'], resolution[i]['data']['id']]);
                     comments.push(this.getCommentsByTop(subreddit, resolution[i]['data']['id'], num_comments));
                 }
-                return comments;
+                return [posts,comments]; //formatted as [list of [title,id], [comment_json]]
             }).then((resolution)=>{
-                return Promise.all(resolution).then((vals)=>{
+                return Promise.all(resolution[1]).then((vals)=>{
                     var text="";
                     for (var i=0; i<num_posts; i++){
-                        //only seems to allow top-level comments
+                        //only allows top-level comments, high level replies are nested further in
                         //console.log(vals[i][1]['data']['children'][j]['data']['body'])
                         for (var j=0; j<num_comments; j++){
                             //i: post index, j: comment index
                             try{
                                 cur_text=vals[i][1]['data']['children'][j]['data']['body'];
+                                // The API returns invalid comments as "undefined" strings
                                 if (cur_text!="undefined"){
                                     text+=cur_text+". ";
                                 }
@@ -57,17 +58,9 @@ module.exports={
                             }
                             catch(e){
                             };
-                            /*
-                            try{
-                                text+=vals[i][1]['data']['children'][0]['data']['children']+". ";
-                                //console.log(vals[i][1]['data']['children'][0]['data']['children']);
-                            }
-                            catch(e){
-                            };*/
                         }
                     }
-                    //console.log(text);
-                    return text;
+                    return [resolution[0], text];
                 })
             }).catch((failure)=>{
                 console.log("err: failure in importText() in reddit.js");

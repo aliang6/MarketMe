@@ -62,15 +62,14 @@ var tonesParams = {
 }
 
 function pAnalyze() { // Call Watson Natural Language Understanding
-  var new_test_text = reddit.importText("bboy",10,10);
+  //importText returns a tuple [[post title, id], plaintext comments]
+  var new_test_text = reddit.importText("bboy",10,10)[1];
   return new_test_text.then((text) => {
     var newNatParams = natParams;
     newNatParams.text=text;
     return newNatParams
-    //console.log(natParams.text);
   }).then((params) => { new Promise((resolve, reject) => {
     naturalLanguageUnderstanding.analyze(params, function(err, response) {
-      console.log(params);
       console.log("nat");
       if (err) {
         console.log(err);
@@ -86,31 +85,17 @@ function pAnalyze() { // Call Watson Natural Language Understanding
       resolve('Text analyzed');
     });
   })});
-
-  /*
-  return new Promise((resolve, reject) => {
-    naturalLanguageUnderstanding.analyze(natParams, function(err, response) {
-      console.log("nat");
-      if (err) {
-        console.log(err);
-        reject('pAnalyze');
-      }
-      else {
-        responses = JSON.stringify(response);
-        console.log(response);
-        jsonReport.keywords.one = response.keywords[0].text;
-        jsonReport.keywords.two = response.keywords[1].text;
-        jsonReport.keywords.three = response.keywords[2].text;
-      }
-      resolve('Text analyzed');
-    });
-  });*/
 }
 
 function pTone() { // Call Watson Tone Analyzer
-  //return new Promise((resolve, reject) => {
-  var tonePromise = new Promise((resolve, reject) => {
-    toneAnalyzer.tone(tonesParams, function (error, toneAnalysis) {
+  //importText returns a tuple [[post title, id], plaintext comments]
+  var new_test_text = reddit.importText("bboy",10,10)[1];
+  return new_test_text.then((text) => {
+    var newToneParams = tonesParams;
+    newToneParams.text=text;
+    return newToneParams
+  }).then((params) => { new Promise((resolve, reject) => {
+    toneAnalyzer.tone(params, function (error, toneAnalysis) {
       console.log("tone");
       if (error) {
         console.log(error);
@@ -144,12 +129,7 @@ function pTone() { // Call Watson Tone Analyzer
       }
       resolve('Tone analyzed');
     });
-  });
-
-  var new_test_text = reddit.importText("bboy",10,10);
-  return new_test_text.then((text) => {
-    natParams.test_text=text;
-  }).then(tonePromise);
+  })});
 }
 
 /* GET home page. */
