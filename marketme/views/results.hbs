@@ -5,30 +5,58 @@
   <div class="tone-section">
     <h2>General Tones</h2>
     <div>
-      <h3>Analytical</h3>
-      <h3>Confident</h3>
-      <h3>Technical</h3>
+      {{#if report.analytical}}
+        <h3 class="present-tone">Analytical</h3>
+      {{else}}
+        <h3>Analytical</h3>
+      {{/if}}
+      {{#if report.confident}}
+        <h3 class="present-tone">Confident</h3>
+      {{else}}
+        <h3>Confident</h3>
+      {{/if}}
+      {{#if report.tentative}}
+        <h3 class="present-tone">Tenntative</h3>
+      {{else}}
+        <h3>Tentative</h3>
+      {{/if}}
     </div>
     <div>
-      <h3>Anger</h3>
-      <h3>Fear</h3>
-      <h3>Joy</h3>
-      <h3>Sadness</h3>
+      {{#if report.anger}}
+        <h3 class="present-tone">Anger</h3>
+      {{else}}
+        <h3>Anger</h3>
+      {{/if}}
+      {{#if report.fear}}
+        <h3 class="present-tone">Fear</h3>
+      {{else}}
+        <h3>Fear</h3>
+      {{/if}}
+      {{#if report.joy}}
+        <h3 class="present-tone">Joy</h3>
+      {{else}}
+        <h3>Joy</h3>
+      {{/if}}
+      {{#if report.sadnesss}}
+        <h3 class="present-tone">Sadness</h3>
+      {{else}}
+        <h3>Sadness</h3>
+      {{/if}}
     </div>
   </div>
 
   <div class="keyword-section">
-    <h2>Top Keywords</h2>
+    <h2>Top Keywords and Relevance</h2>
     <div>
       <div>
-        <h3>One</h3>
-        <h3>Two</h3>
-        <h3>Three</h3>
+        <h3>{{report.keywords.one}}</h3>
+        <h3>{{report.keywords.two}}</h3>
+        <h3>{{report.keywords.three}}</h3>
       </div>
       <div>
-        <h3>100%</h3>
-        <h3>100%</h3>
-        <h3>100%</h3>
+        <h3>{{report.key_rel.one}}</h3>
+        <h3>{{report.key_rel.two}}</h3>
+        <h3>{{report.key_rel.three}}</h3>
       </div>
     </div>
   </div>
