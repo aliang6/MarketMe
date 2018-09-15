@@ -63,10 +63,10 @@ var tonesParams = {
 
 function pAnalyze() { // Call Watson Natural Language Understanding
   //importText returns a tuple [[post title, id], plaintext comments]
-  var new_test_text = reddit.importText("bboy",10,10)[1];
+  var new_test_text = reddit.importText("bboy",10,10);
   return new_test_text.then((text) => {
     var newNatParams = natParams;
-    newNatParams.text=text;
+    newNatParams.text=text[1];
     return newNatParams
   }).then((params) => { new Promise((resolve, reject) => {
     naturalLanguageUnderstanding.analyze(params, function(err, response) {
@@ -92,7 +92,7 @@ function pTone() { // Call Watson Tone Analyzer
   var new_test_text = reddit.importText("bboy",10,10)[1];
   return new_test_text.then((text) => {
     var newToneParams = tonesParams;
-    newToneParams.text=text;
+    newToneParams.text=text[1];
     return newToneParams
   }).then((params) => { new Promise((resolve, reject) => {
     toneAnalyzer.tone(params, function (error, toneAnalysis) {
