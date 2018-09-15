@@ -5,6 +5,8 @@ const NaturalLanguageUnderstandingV1 = require('watson-developer-cloud/natural-l
 var ToneAnalyzerV3 = require('watson-developer-cloud/tone-analyzer/v3');
 require('dotenv').config();
 
+const reddit = require("./reddit.js")
+
 // JSON for the front end
 var jsonReport = {
   anger: false,
@@ -32,7 +34,6 @@ var test_text = 'WASHINGTON, N.C. — After slamming into the Carolina coast on 
 'Downed trees also delayed crews responding to a 911 call from the home of a woman who died of a heart attack Friday morning in Hampstead, an unincorporated area of Pender County, N.C., officials said. Another two people, both in their 70s, were killed in Lenoir County, one while trying to connect two extension cords outside in the rain, and the other when he went outside to check on his hunting dogs and was blown down by wind, the authorities said.' +
 'Rescue teams had to suspend some operations because of powerful winds in South Carolina’s Horry County, which includes the coastal cities of Myrtle Beach and North Myrtle Beach.' +
 '“We have now halted emergency responses until storm conditions allow for personnel to respond safely,” said Jay Fernandez, the director of public safety for North Myrtle Beach, describing winds so strong that rescuers were at risk.';
-
 
 // IBM Watson Natural Language Understanding API Setup
 var naturalLanguageUnderstanding = new NaturalLanguageUnderstandingV1({
@@ -66,8 +67,14 @@ var tonesParams = {
 }
 
 function pAnalyze() { // Call Watson Natural Language Understanding
-  return new Promise((resolve, reject) => {
-    naturalLanguageUnderstanding.analyze(natParams, function(err, response) {
+  //importText returns a tuple [[post title, id], plaintext comments]
+  var new_test_text = reddit.importText("bboy",10,10)[1];
+  return new_test_text.then((text) => {
+    var newNatParams = natParams;
+    newNatParams.text=text;
+    return newNatParams
+  }).then((params) => { new Promise((resolve, reject) => {
+    naturalLanguageUnderstanding.analyze(params, function(err, response) {
       console.log("nat");
       if (err) {
         console.log(err);
@@ -85,17 +92,23 @@ function pAnalyze() { // Call Watson Natural Language Understanding
       }
       resolve('Text analyzed');
     });
-  });
+  })});
 }
 
 function pTone() { // Call Watson Tone Analyzer
-  return new Promise((resolve, reject) => {
-    toneAnalyzer.tone(tonesParams, function (error, toneAnalysis) {
+  //importText returns a tuple [[post title, id], plaintext comments]
+  var new_test_text = reddit.importText("bboy",10,10)[1];
+  return new_test_text.then((text) => {
+    var newToneParams = tonesParams;
+    newToneParams.text=text;
+    return newToneParams
+  }).then((params) => { new Promise((resolve, reject) => {
+    toneAnalyzer.tone(params, function (error, toneAnalysis) {
       console.log("tone");
       if (error) {
         console.log(error);
         reject('pTone');
-      } else { 
+      } else {
         tones = JSON.parse(JSON.stringify(toneAnalysis));
         console.log(tones);
         for(let tone of tones.document_tone.tones) {
@@ -124,7 +137,7 @@ function pTone() { // Call Watson Tone Analyzer
       }
       resolve('Tone analyzed');
     });
-  });
+  })});
 }
 
 /* GET home page. */
