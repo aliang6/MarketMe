@@ -1,8 +1,9 @@
 const http=require('http');
 const request=require('request');
-const port=8008
 
-var getSubredditByTop = function getSubByTop(subreddit, limit){
+module.exports={
+
+    getSubredditsByTop: function getSubredditsByTop(subreddit, limit){
     var timeframe ='all';
     var redditRequest = new Promise(
         (resolve, reject) => {
@@ -14,9 +15,9 @@ var getSubredditByTop = function getSubByTop(subreddit, limit){
             });
         });
     return redditRequest;
-};
+    },
 
-var getCommentsByTop = function getCommentsByTop(subreddit, post, limit){
+    getCommentsByTop: function getCommentsByTop(subreddit, post, limit){
     var redditRequest = new Promise(
         (resolve, reject) => {
             console.log(`http://reddit.com/r/${subreddit}/comments/${post}.json?limit=${limit}`);
@@ -28,45 +29,45 @@ var getCommentsByTop = function getCommentsByTop(subreddit, post, limit){
                 });
         });
     return redditRequest;
-};
+    },
 
-var requestHandler = (request,response) => {
-    var subreddit="bboy";
-    var num_posts=10;
-    var num_comments=10;
+    importText: function importText(subreddit, num_posts, num_comments){
 
-    postRequest=getSubredditByTop(subreddit, num_posts);
+    postRequest=this.getSubredditsByTop(subreddit, num_posts);
     postRequests=postRequest.then((resolution) => {
                 comments=[]
                 for (var i=0; i<resolution.length; i++){
-                    comments.push(getCommentsByTop(subreddit, resolution[i]['data']['id'], num_comments));
+                    comments.push(this.getCommentsByTop(subreddit, resolution[i]['data']['id'], num_comments));
                 }
                 return comments;
             }).then((resolution)=>{
                 Promise.all(resolution).then((vals)=>{
+                    var text="";
                     for (var i=0; i<num_posts; i++){
                         //only seems to allow top-level comments
                         //console.log(vals[i][1]['data']['children'][j]['data']['body'])
                         for (var j=0; j<num_comments; j++){
                             //i: post index, j: comment index
                             try{
-                                console.log(vals[i][1]['data']['children'][j]['data']['body']);
+                                text+=vals[i][1]['data']['children'][j]['data']['body']+"\n";
+                                //console.log(vals[i][1]['data']['children'][j]['data']['body']);
+                            }
+                            catch(e){
+                            };
+                            try{
+                                text+=vals[i][1]['data']['children'][0]['data']['children']+"\n";
+                                //console.log(vals[i][1]['data']['children'][0]['data']['children']);
                             }
                             catch(e){
                             };
                         }
                     }
+                    //console.log(text);
+                    return text;
                 })
             }).catch((failure)=>{
-                console.log("ERR: comment failure");
+                console.log("err: failure in importText() in reddit.js");
             });
-}
-
-const server=http.createServer(requestHandler);
-
-server.listen(port, (err) => {
-    if (err) {
-        return console.log("error",err)
+    return postRequests
     }
-    console.log(`server listening on ${port}`);
-});
+};
