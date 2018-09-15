@@ -4,8 +4,8 @@ var router = express.Router();
 const NaturalLanguageUnderstandingV1 = require('watson-developer-cloud/natural-language-understanding/v1');
 var ToneAnalyzerV3 = require('watson-developer-cloud/tone-analyzer/v3');
 require('dotenv').config();
-
 const reddit = require("./reddit.js")
+const keywords = require("./keywords.js")
 
 // JSON for the front end
 var jsonReport = {
@@ -68,21 +68,23 @@ var tonesParams = {
 
 function pAnalyze() { // Call Watson Natural Language Understanding
   //importText returns a tuple [[post title, id], plaintext comments]
-  var new_test_text = reddit.importText("bboy",10,10)[1];
+  var new_test_text = reddit.importText("bboy",10,10);
+  var synonyms = keywords.synonymRequest("boy",3);
+  keywords.multiSynonymRequest(["boy","anger"],3);
   return new_test_text.then((text) => {
     var newNatParams = natParams;
-    newNatParams.text=text;
+    newNatParams.text=text[1];
     return newNatParams
   }).then((params) => { new Promise((resolve, reject) => {
     naturalLanguageUnderstanding.analyze(params, function(err, response) {
-      console.log("nat");
+      console.log("nature");
       if (err) {
         console.log(err);
         reject('pAnalyze');
       }
       else {
         responses = JSON.stringify(response);
-        console.log(response);
+        //console.log(response);
         jsonReport.keywords.one = response.keywords[0].text;
         jsonReport.keywords.two = response.keywords[1].text;
         jsonReport.keywords.three = response.keywords[2].text;
@@ -97,10 +99,11 @@ function pAnalyze() { // Call Watson Natural Language Understanding
 
 function pTone() { // Call Watson Tone Analyzer
   //importText returns a tuple [[post title, id], plaintext comments]
-  var new_test_text = reddit.importText("bboy",10,10)[1];
+  var new_test_text = reddit.importText("bboy",10,10)
+  console.log();
   return new_test_text.then((text) => {
     var newToneParams = tonesParams;
-    newToneParams.text=text;
+    newToneParams.text=text[1];
     return newToneParams
   }).then((params) => { new Promise((resolve, reject) => {
     toneAnalyzer.tone(params, function (error, toneAnalysis) {
@@ -110,7 +113,7 @@ function pTone() { // Call Watson Tone Analyzer
         reject('pTone');
       } else {
         tones = JSON.parse(JSON.stringify(toneAnalysis));
-        console.log(tones);
+        //console.log(tones);
         for(let tone of tones.document_tone.tones) {
           if(tone.tone_name.toLowerCase() === 'analytical') {
             jsonReport.analytical = true
