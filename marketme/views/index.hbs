@@ -1,4 +1,5 @@
 <body id="page-top">
+  <div id="loader-elem"></div>
 
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
@@ -38,12 +39,12 @@
             </div>
             <div class="col-lg-8 mx-auto">
               <p class="text-faded mb-5">Finding the perfect platform to market your ideas </p>
-              <form action="/results" method="POST">
+              <form id="submit-form" action="/results" method="POST">
                 <div class="search-container">
                   <div class="search-underline">
                     <input type="text" class="search-input" name="input" placeholder="Input keywords separated by a comma..." autocomplete="off"/>
                   </div>
-                  <button type="submit" class="submit-btn" value="Submit">Process</button>
+                  <button type="button" class="submit-btn" value="Submit" onclick="clickHandler()">Process</button>
                 </div>
               </form>
             </div>
@@ -130,7 +131,14 @@
     </section>
     
     <!-- Custom scripts for this template -->
+    <script>
+      function clickHandler() {
+        document.getElementById('loader-elem').classList.add('loader', 'bg-grey');
+        setTimeout(() => {
+          document.getElementById('submit-form').submit();
+        }, 2000)
+      }
+    </script>
     <script src="/libs/jquery/1.12.0/jquery.min.js"></script>
     <script src="../public/javascripts/creative.js"></script>
-
   </body>
