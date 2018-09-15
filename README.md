@@ -1,5 +1,6 @@
 # MarketMe
 Andy Liang and Ivan Lin
+
 SBU Hacks - 9/14/2018
 
 ## Description
@@ -18,9 +19,11 @@ For now, the search applies to Reddit subcommunities, but we hope to expand this
 - Etc
 
 ## Tools
+### Front-End
+HTML, CSS, Bootstrap, JavaScript
 
-Node.js, HTML, CSS, JavaScript
+### Back-End
+Node.js, Express
 
 ### APIs and Libraries
-Watson, Reddit API, OAuth
-
+IBM Watson, Reddit API, OAuth2
