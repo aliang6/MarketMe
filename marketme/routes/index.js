@@ -25,6 +25,49 @@ var jsonReport = {
     one: '',
     two: '',
     three: '',
+  },
+  posts: {
+    one: {
+      title: '',
+      id: '',
+    },
+    two: {
+      title: '',
+      id: '',
+    },
+    three: {
+      title: '',
+      id: '',
+    },
+    four: {
+      title: '',
+      id: '',
+    },
+    five: {
+      title: '',
+      id: '',
+    },
+    six: {
+      title: '',
+      id: '',
+    },
+    seven: {
+      title: '',
+      id: '',
+    },
+    eight: {
+      title: '',
+      id: '',
+    },
+    nine: {
+      title: '',
+      id: '',
+    },
+    ten: {
+      title: '',
+      id: '',
+    },
+
   }
 }
 
@@ -69,9 +112,51 @@ var tonesParams = {
 function pAnalyze() { // Call Watson Natural Language Understanding
   //importText returns a tuple [[post title, id], plaintext comments]
   var new_test_text = reddit.importText("bboy",10,10);
+  var subreddit = 'bboy';
   var synonyms = keywords.synonymRequest("boy",3);
   keywords.multiSynonymRequest(["boy","anger"],3);
   return new_test_text.then((text) => {
+    console.log(text);
+    if(text[0][0] !== undefined){
+      jsonReport.posts.one.title = text[0][0][0];
+      jsonReport.posts.one.id = 'https://reddit.com/r/' + subreddit + '/comments/' + text[0][0][1];
+    }
+    if(text[0][1] !== undefined){
+      jsonReport.posts.two.title = text[0][1][0];
+      jsonReport.posts.two.id = 'https://reddit.com/r/' + subreddit + '/comments/' + text[0][1][1];
+    }
+    if(text[0][2] !== undefined){
+      jsonReport.posts.three.title = text[0][2][0];
+      jsonReport.posts.three.id = 'https://reddit.com/r/' + subreddit + '/comments/' + text[0][2][1];
+    }
+    if(text[0][3] !== undefined){
+      jsonReport.posts.four.title = text[0][3][0];
+      jsonReport.posts.four.id = 'https://reddit.com/r/' + subreddit + '/comments/' + text[0][3][1];
+    }
+    if(text[0][4] !== undefined){
+      jsonReport.posts.five.title = text[0][4][0];
+      jsonReport.posts.five.id = 'https://reddit.com/r/' + subreddit + '/comments/' + text[0][4][1];
+    }
+    if(text[0][5] !== undefined){
+      jsonReport.posts.six.title = text[0][5][0];
+      jsonReport.posts.six.id = 'https://reddit.com/r/' + subreddit + '/comments/' + text[0][5][1];
+    }
+    if(text[0][6] !== undefined){
+      jsonReport.posts.seven.title = text[0][6][0];
+      jsonReport.posts.seven.id = 'https://reddit.com/r/' + subreddit + '/comments/' + text[0][6][1];
+    }
+    if(text[0][7] !== undefined){
+      jsonReport.posts.eight.title = text[0][7][0];
+      jsonReport.posts.eight.id = 'https://reddit.com/r/' + subreddit + '/comments/' + text[0][7][1];
+    }
+    if(text[0][8] !== undefined){
+      jsonReport.posts.nine.title = text[0][8][0];
+      jsonReport.posts.nine.id = 'https://reddit.com/r/' + subreddit + '/comments/' + text[0][8][1];
+    }
+    if(text[0][9] !== undefined){
+      jsonReport.posts.ten.title = text[0][9][0];
+      jsonReport.posts.ten.id = 'https://reddit.com/r/' + subreddit + '/comments/' + text[0][9][1];
+    }
     var newNatParams = natParams;
     newNatParams.text=text[1];
     return newNatParams
