@@ -71,6 +71,8 @@ var jsonReport = {
   }
 }
 
+var new_test_text = '';
+
 var test_text = 'WASHINGTON, N.C. — After slamming into the Carolina coast on Friday with powerful winds and torrential rains, Hurricane Florence left a trail of devastation as it crawled over the southeastern part of the state, posing what may be its greatest threat in the days ahead as it roars inland with what are shaping up to be record-setting quantities of water.' +
 'The storm, whose destructive power was unlike any the area has seen in a generation, had already caused at least five fatalities as of Friday afternoon, and rescue crews across a wide region were attempting to pluck distressed residents from rooftops. The victims included a mother and her infant in Wilmington, N.C., who were killed when a tree fell on their house, the police department said.' +
 'Rescuers spent hours trying to reach the mother and infant, who were trapped by the tree and a portion of the roof that had collapsed on them, said Deputy Fire Chief J.S. Mason.' +
@@ -103,65 +105,28 @@ var toneAnalyzer = new ToneAnalyzerV3({
     iam_apikey: process.env.WATSON_TONE_KEY,
     url: 'https://gateway-wdc.watsonplatform.net/tone-analyzer/api'
 });
-var tonesParams = {
+var toneParams = {
   'tone_input': { 'text': test_text },
   'content_type': 'application/json',
   'sentences': false,
 }
 
-function pAnalyze(subreddit) { // Call Watson Natural Language Understanding
+function pAnalyze() { // Call Watson Natural Language Understanding
   //importText returns a tuple [[post title, id], plaintext comments]
-  var new_test_text = reddit.importText(subreddit, 10,10);
+  //var new_test_text = reddit.importText(subreddit, 10,10);
 
-  var synonyms = keywords.synonymRequest("boy",3);
-  keywords.multiSynonymRequest(["boy","anger"],3);
-  return new_test_text.then((text) => {
+  /* var synonyms = keywords.synonymRequest("boy",3);
+  keywords.multiSynonymRequest(["boy","anger"],3); */
+  /* return new_test_text.then((text) => {
     console.log(text);
-    if(text[0][0] !== undefined){
-      jsonReport.posts.one.title = text[0][0][0];
-      jsonReport.posts.one.id = 'https://reddit.com/r/' + subreddit + '/comments/' + text[0][0][1];
-    }
-    if(text[0][1] !== undefined){
-      jsonReport.posts.two.title = text[0][1][0];
-      jsonReport.posts.two.id = 'https://reddit.com/r/' + subreddit + '/comments/' + text[0][1][1];
-    }
-    if(text[0][2] !== undefined){
-      jsonReport.posts.three.title = text[0][2][0];
-      jsonReport.posts.three.id = 'https://reddit.com/r/' + subreddit + '/comments/' + text[0][2][1];
-    }
-    if(text[0][3] !== undefined){
-      jsonReport.posts.four.title = text[0][3][0];
-      jsonReport.posts.four.id = 'https://reddit.com/r/' + subreddit + '/comments/' + text[0][3][1];
-    }
-    if(text[0][4] !== undefined){
-      jsonReport.posts.five.title = text[0][4][0];
-      jsonReport.posts.five.id = 'https://reddit.com/r/' + subreddit + '/comments/' + text[0][4][1];
-    }
-    if(text[0][5] !== undefined){
-      jsonReport.posts.six.title = text[0][5][0];
-      jsonReport.posts.six.id = 'https://reddit.com/r/' + subreddit + '/comments/' + text[0][5][1];
-    }
-    if(text[0][6] !== undefined){
-      jsonReport.posts.seven.title = text[0][6][0];
-      jsonReport.posts.seven.id = 'https://reddit.com/r/' + subreddit + '/comments/' + text[0][6][1];
-    }
-    if(text[0][7] !== undefined){
-      jsonReport.posts.eight.title = text[0][7][0];
-      jsonReport.posts.eight.id = 'https://reddit.com/r/' + subreddit + '/comments/' + text[0][7][1];
-    }
-    if(text[0][8] !== undefined){
-      jsonReport.posts.nine.title = text[0][8][0];
-      jsonReport.posts.nine.id = 'https://reddit.com/r/' + subreddit + '/comments/' + text[0][8][1];
-    }
-    if(text[0][9] !== undefined){
-      jsonReport.posts.ten.title = text[0][9][0];
-      jsonReport.posts.ten.id = 'https://reddit.com/r/' + subreddit + '/comments/' + text[0][9][1];
-    }
+    
     var newNatParams = natParams;
     newNatParams.text=text[1];
     return newNatParams
-  }).then((params) => { new Promise((resolve, reject) => {
-    naturalLanguageUnderstanding.analyze(params, function(err, response) {
+  }).then((params) => {  */
+  return new Promise((resolve, reject) => {
+    natParams.text = new_test_text[1];
+    naturalLanguageUnderstanding.analyze(natParams, function(err, response) {
       console.log("nature");
       if (err) {
         console.log(err);
@@ -179,54 +144,109 @@ function pAnalyze(subreddit) { // Call Watson Natural Language Understanding
       }
       resolve('Text analyzed');
     });
-  })});
+  });
 }
 
-function pTone(subreddit) { // Call Watson Tone Analyzer
+function pTone() { // Call Watson Tone Analyzer
   //importText returns a tuple [[post title, id], plaintext comments]
-  var new_test_text = reddit.importText(subreddit,10,10)
+  /* var new_test_text = reddit.importText(subreddit,10,10)
   console.log();
-  return new_test_text.then((text) => {
-    var newToneParams = tonesParams;
-    newToneParams.text=text[1];
-    return newToneParams
-  }).then((params) => { new Promise((resolve, reject) => {
-    toneAnalyzer.tone(params, function (error, toneAnalysis) {
+  return new_test_text.then((text) => { */
+  /* }).then((params) => {  */
+  return new Promise((resolve, reject) => {
+    toneParams.text = new_test_text[0][1];
+    toneAnalyzer.tone(toneParams, function (error, toneAnalysis) {
       console.log("tone");
       if (error) {
         console.log(error);
         reject('pTone');
       } else {
         tones = JSON.parse(JSON.stringify(toneAnalysis));
-        //console.log(tones);
+        console.log(tones);
         for(let tone of tones.document_tone.tones) {
           if(tone.tone_name.toLowerCase() === 'analytical') {
             jsonReport.analytical = true
           }
-          else if(tone.tone_name.toLowerCase() === 'confident') {
+          if(tone.tone_name.toLowerCase() === 'confident') {
             jsonReport.confident = true
           }
-          else if(tone.tone_name.toLowerCase() === 'tentative') {
+          if(tone.tone_name.toLowerCase() === 'tentative') {
             jsonReport.tentative = true
           }
-          else if(tone.tone_name.toLowerCase() === 'anger') {
+          if(tone.tone_name.toLowerCase() === 'anger') {
             jsonReport.anger = true
           }
-          else if(tone.tone_name.toLowerCase() === 'fear') {
+          if(tone.tone_name.toLowerCase() === 'fear') {
             jsonReport.fear = true
           }
-          else if(tone.tone_name.toLowerCase() === 'joy') {
+          if(tone.tone_name.toLowerCase() === 'joy') {
             jsonReport.joy = true
           }
-          else if(tone.tone_name.toLowerCase() === 'sadnesss') {
+          if(tone.tone_name.toLowerCase() === 'sadnesss') {
             jsonReport.sadness = true
           }
         }
       }
       resolve('Tone analyzed');
     });
-  })});
+  });
 }
+
+function getText(subreddit) {
+  return new Promise((resolve, reject) => {
+    reddit.importText(subreddit, 10,10).then((text) =>{
+      new_test_text = text;
+      if(text[0][0] !== undefined){
+        jsonReport.posts.one.title = text[0][0][0];
+        jsonReport.posts.one.id = 'https://reddit.com/r/' + subreddit + '/comments/' + text[0][0][1];
+      }
+      if(text[0][1] !== undefined){
+        jsonReport.posts.two.title = text[0][1][0];
+        jsonReport.posts.two.id = 'https://reddit.com/r/' + subreddit + '/comments/' + text[0][1][1];
+      }
+      if(text[0][2] !== undefined){
+        jsonReport.posts.three.title = text[0][2][0];
+        jsonReport.posts.three.id = 'https://reddit.com/r/' + subreddit + '/comments/' + text[0][2][1];
+      }
+      if(text[0][3] !== undefined){
+        jsonReport.posts.four.title = text[0][3][0];
+        jsonReport.posts.four.id = 'https://reddit.com/r/' + subreddit + '/comments/' + text[0][3][1];
+      }
+      if(text[0][4] !== undefined){
+        jsonReport.posts.five.title = text[0][4][0];
+        jsonReport.posts.five.id = 'https://reddit.com/r/' + subreddit + '/comments/' + text[0][4][1];
+      }
+      if(text[0][5] !== undefined){
+        jsonReport.posts.six.title = text[0][5][0];
+        jsonReport.posts.six.id = 'https://reddit.com/r/' + subreddit + '/comments/' + text[0][5][1];
+      }
+      if(text[0][6] !== undefined){
+        jsonReport.posts.seven.title = text[0][6][0];
+        jsonReport.posts.seven.id = 'https://reddit.com/r/' + subreddit + '/comments/' + text[0][6][1];
+      }
+      if(text[0][7] !== undefined){
+        jsonReport.posts.eight.title = text[0][7][0];
+        jsonReport.posts.eight.id = 'https://reddit.com/r/' + subreddit + '/comments/' + text[0][7][1];
+      }
+      if(text[0][8] !== undefined){
+        jsonReport.posts.nine.title = text[0][8][0];
+        jsonReport.posts.nine.id = 'https://reddit.com/r/' + subreddit + '/comments/' + text[0][8][1];
+      }
+      if(text[0][9] !== undefined){
+        jsonReport.posts.ten.title = text[0][9][0];
+        jsonReport.posts.ten.id = 'https://reddit.com/r/' + subreddit + '/comments/' + text[0][9][1];
+      }
+      resolve('Text retrieved');
+    }).catch((err) => {
+      console.log(err);
+      reject('getText');
+    });
+    if(new_test_text === undefined) {
+      reject('getText');
+    }
+  });
+}
+
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -237,16 +257,22 @@ router.post('/results', (req, res) => {
   var input = req.body.input;
   //Input parsing
   // API Call
-  pAnalyze(input).then(() => {
-    pTone(input).then(() =>{
-      console.log(jsonReport);
-      res.render('results', { report: jsonReport });
+
+  getText(input).then(() =>{
+    pAnalyze().then(() => {
+      pTone().then(() =>{
+        console.log(jsonReport);
+        res.render('results', { report: jsonReport });
+      }).catch((err) => {
+        console.log(err);
+      });
     }).catch((err) => {
       console.log(err);
     });
   }).catch((err) => {
     console.log(err);
   });
+  
   //res.render('results', { report: jsonReport });
 });
 
