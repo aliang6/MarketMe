@@ -20,6 +20,11 @@ var jsonReport = {
     one: '',
     two: '',
     three: '',
+  },
+  key_rel: {
+    one: '',
+    two: '',
+    three: '',
   }
 }
 
@@ -81,6 +86,9 @@ function pAnalyze() { // Call Watson Natural Language Understanding
         jsonReport.keywords.one = response.keywords[0].text;
         jsonReport.keywords.two = response.keywords[1].text;
         jsonReport.keywords.three = response.keywords[2].text;
+        jsonReport.key_rel.one = response.keywords[0].relevance;
+        jsonReport.key_rel.two = response.keywords[1].relevance;
+        jsonReport.key_rel.three = response.keywords[2].relevance;
       }
       resolve('Text analyzed');
     });

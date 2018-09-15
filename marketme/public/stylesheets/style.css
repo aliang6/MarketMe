@@ -457,12 +457,16 @@ transition: .3s ease;
   width: 100%;
   background-color: #CB9000;
   font-size: 1rem;
-  color: rgba(255, 255, 255, 0.35);
+  color: rgba(255, 255, 255, 0.25);
+}
+
+.present-tone {
+  color: rgba(255, 255, 255, 0.8)
 }
 
 .tone-section h2 {
   margin-top: 3%;
-  color: rgba(255, 255, 255, .8);
+  color: rgba(255, 255, 255, .9);
 }
 
 .tone-section div {
