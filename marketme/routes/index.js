@@ -109,10 +109,10 @@ var tonesParams = {
   'sentences': false,
 }
 
-function pAnalyze() { // Call Watson Natural Language Understanding
+function pAnalyze(subreddit) { // Call Watson Natural Language Understanding
   //importText returns a tuple [[post title, id], plaintext comments]
-  var new_test_text = reddit.importText("bboy",10,10);
-  var subreddit = 'bboy';
+  var new_test_text = reddit.importText(subreddit, 10,10);
+
   var synonyms = keywords.synonymRequest("boy",3);
   keywords.multiSynonymRequest(["boy","anger"],3);
   return new_test_text.then((text) => {
@@ -182,9 +182,9 @@ function pAnalyze() { // Call Watson Natural Language Understanding
   })});
 }
 
-function pTone() { // Call Watson Tone Analyzer
+function pTone(subreddit) { // Call Watson Tone Analyzer
   //importText returns a tuple [[post title, id], plaintext comments]
-  var new_test_text = reddit.importText("bboy",10,10)
+  var new_test_text = reddit.importText(subreddit,10,10)
   console.log();
   return new_test_text.then((text) => {
     var newToneParams = tonesParams;
@@ -237,8 +237,8 @@ router.post('/results', (req, res) => {
   var input = req.body.input;
   //Input parsing
   // API Call
-  pAnalyze().then(() => {
-    pTone().then(() =>{
+  pAnalyze(input).then(() => {
+    pTone(input).then(() =>{
       console.log(jsonReport);
       res.render('results', { report: jsonReport });
     }).catch((err) => {
